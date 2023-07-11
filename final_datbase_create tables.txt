@@ -1,0 +1,122 @@
+CREATE TABLE `admin` (
+  `admin_ID` varchar(20) NOT NULL,
+  `username` varchar(20) DEFAULT NULL,
+  `password` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`admin_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `branch` (
+  `branch_ID` varchar(15) NOT NULL,
+  `reg_no` varchar(15) DEFAULT NULL,
+  `city` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`branch_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `employee` (
+  `ID` varchar(15) NOT NULL,
+  `branch_ID` varchar(15) DEFAULT NULL,
+  `title_ID` varchar(15) DEFAULT NULL,
+  `status_ID` varchar(15) DEFAULT NULL,
+  `salary_ID` varchar(15) DEFAULT NULL,
+  `dept_name` varchar(15) DEFAULT NULL,
+  `sup_ID` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `branch_ID` (`branch_ID`),
+  KEY `title_ID` (`title_ID`),
+  KEY `status_ID` (`status_ID`),
+  KEY `salary_ID` (`salary_ID`),
+  CONSTRAINT `employee_ibfk_1` FOREIGN KEY (`branch_ID`) REFERENCES `branch` (`branch_ID`) ON UPDATE CASCADE,
+  CONSTRAINT `employee_ibfk_2` FOREIGN KEY (`title_ID`) REFERENCES `title` (`title_ID`) ON UPDATE CASCADE,
+  CONSTRAINT `employee_ibfk_3` FOREIGN KEY (`status_ID`) REFERENCES `status` (`status_ID`) ON UPDATE CASCADE,
+  CONSTRAINT `employee_ibfk_4` FOREIGN KEY (`salary_ID`) REFERENCES `salary` (`salary_ID`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `leave_count` (
+  `ID` varchar(15) NOT NULL,
+  `anual` decimal(8,0) DEFAULT NULL,
+  `casual` decimal(8,0) DEFAULT NULL,
+  `nopay` decimal(8,0) DEFAULT NULL,
+  `maternity` decimal(8,0) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  CONSTRAINT `leave_count_ibfk_1` FOREIGN KEY (`ID`) REFERENCES `personal_data` (`ID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `leave_table` (
+  `ID` varchar(15) NOT NULL,
+  `sup_ID` varchar(15) DEFAULT NULL,
+  `first_name` varchar(20) DEFAULT NULL,
+  `leave_type` varchar(30) DEFAULT NULL,
+  `requested_date` varchar(30) NOT NULL,
+  `number_of_days` varchar(10) DEFAULT NULL,
+  `status` varchar(20) NOT NULL,
+  PRIMARY KEY (`ID`,`requested_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `leave_type` (
+  `salary_ID` varchar(15) NOT NULL,
+  `anual` decimal(8,0) DEFAULT NULL,
+  `casual` decimal(4,0) DEFAULT NULL,
+  `nopay` decimal(4,0) DEFAULT NULL,
+  `maternity` decimal(4,0) DEFAULT NULL,
+  PRIMARY KEY (`salary_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `organization` (
+  `company_ID` varchar(15) NOT NULL,
+  `name` varchar(30) NOT NULL,
+  `head_q` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`company_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `personal_data` (
+  `ID` varchar(15) NOT NULL,
+  `first_name` varchar(15) DEFAULT 'NOT NULL',
+  `last_name` varchar(15) NOT NULL DEFAULT 'NOT NULL',
+  `birthday` varchar(15) DEFAULT 'NOT NULL',
+  `NIC_no` varchar(15) DEFAULT 'NOT NULL',
+  `gender` varchar(15) DEFAULT 'NOT NULL',
+  `house_no` varchar(15) DEFAULT NULL,
+  `lane` varchar(15) DEFAULT NULL,
+  `city` varchar(15) DEFAULT NULL,
+  `district` varchar(15) DEFAULT NULL,
+  `province` varchar(15) DEFAULT NULL,
+  `emergency_contact` varchar(15) DEFAULT NULL,
+  `religion` varchar(20) DEFAULT NULL,
+  `nationality` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `phone_numbers` (
+  `ID` int(11) NOT NULL,
+  `number_type` varchar(10) NOT NULL,
+  `number` varchar(15) NOT NULL,
+  PRIMARY KEY (`ID`,`number`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `salary` (
+  `salary_ID` varchar(20) NOT NULL,
+  `paylevel` varchar(20) DEFAULT NULL,
+  `amount` decimal(10,0) DEFAULT NULL,
+  PRIMARY KEY (`salary_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `status` (
+  `status_ID` varchar(15) NOT NULL,
+  `state` varchar(15) DEFAULT 'NOT NULL',
+  `time` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`status_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `title` (
+  `title_ID` varchar(15) NOT NULL,
+  `job` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`title_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `user` (
+  `ID` varchar(15) NOT NULL,
+  `username` varchar(20) NOT NULL,
+  `password` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`ID`,`username`),
+  CONSTRAINT `user_ibfk_1` FOREIGN KEY (`ID`) REFERENCES `personal_data` (`ID`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -1,0 +1,137 @@
+delimiter //
+create trigger anual
+before update on leave_count
+for each row
+if new.anual < 0 then set new.anual = 0;
+end if; //
+
+delimiter //
+create trigger casual
+before update on leave_count
+for each row
+if new.casual<0 then set new.casual = 0;
+end if; //
+
+delimiter //
+create trigger nopay
+before update on leave_count
+for each row
+if new.nopay<0 then set new.nopay = 0;
+end if; //
+
+delimiter //
+create trigger maternity
+before update on leave_count
+for each row
+if new.maternity<0 then set new.maternity = 0;
+end if; //
+
+-----------------view-----------------------
+
+CREATE VIEW `employee_by_department` AS
+    SELECT 
+        `e`.`ID` AS `ID`,
+        `p`.`first_name` AS `first_name`,
+        `p`.`last_name` AS `last_name`,
+        `t`.`job` AS `job`,
+        `e`.`dept_name` AS `dept_name`
+    FROM
+        ((`employee` `e`
+        JOIN `personal_data` `p` ON (`e`.`ID` = `p`.`ID`))
+        JOIN `title` `t` ON (`e`.`title_ID` = `t`.`title_ID`))
+    ORDER BY `e`.`ID`  order by ID
+
+
+CREATE VIEW `group_reports` AS
+    SELECT 
+        `employee`.`ID` AS `ID`,
+        `employee`.`status_ID` AS `status_ID`,
+        `employee`.`branch_ID` AS `branch_ID`,
+        `employee`.`dept_name` AS `dept_name`,
+        `salary`.`amount` AS `amount`,
+        `employee`.`title_ID` AS `title_ID`
+    FROM
+        (`employee`
+        JOIN `salary` ON (`salary`.`salary_ID` = `employee`.`salary_ID`))
+    ORDER BY `employee`.`ID` 
+
+
+CREATE VIEW `custom_report` AS
+    SELECT 
+        `e`.`ID` AS `ID`,
+        `p`.`first_name` AS `first_name`,
+        `p`.`last_name` AS `last_name`,
+        `e`.`dept_name` AS `dept_name`,
+        `p`.`religion` AS `religion`,
+        `p`.`nationality` AS `nationality`
+    FROM
+        (`employee` `e`
+        JOIN `personal_data` `p` ON (`e`.`ID` = `p`.`ID`))
+
+
+CREATE VIEW `group_reports_view` AS
+    SELECT 
+        `e`.`ID` AS `ID`,
+        `e`.`status_ID` AS `status_ID`,
+        `e`.`branch_ID` AS `branch_ID`,
+        `e`.`dept_name` AS `dept_name`,
+        `s`.`amount` AS `amount`,
+        `e`.`title_ID` AS `title_ID`,
+        `t`.`job` AS `job`,
+        `st`.`state` AS `state`,
+        `st`.`time` AS `time`,
+        `b`.`city` AS `city`
+    FROM
+        ((((`employee` `e`
+        JOIN `salary` `s` ON (`e`.`salary_ID` = `s`.`salary_ID`))
+        JOIN `title` `t` ON (`e`.`title_ID` = `t`.`title_ID`))
+        JOIN `status` `st` ON (`st`.`status_ID` = `e`.`status_ID`))
+        JOIN `branch` `b` ON (`b`.`branch_ID` = `e`.`branch_ID`))
+
+
+CREATE VIEW `leave_reports` AS
+    SELECT 
+        `e`.`ID` AS `ID`,
+        `e`.`branch_ID` AS `branch_ID`,
+        `e`.`title_ID` AS `title_ID`,
+        `e`.`status_ID` AS `status_ID`,
+        `e`.`salary_ID` AS `salary_ID`,
+        `e`.`dept_name` AS `dept_name`,
+        `l`.`leave_type` AS `leave_type`,
+        `l`.`number_of_days` AS `no_of_days`,
+        `l`.`requested_date` AS `leave_date`,
+        `l`.`status` AS `leave_status`
+    FROM
+        (`employee` `e`
+        JOIN `leave_table` `l` ON (`l`.`ID` = `e`.`ID`))
+    WHERE
+        `l`.`status` = 'approved'
+    ORDER BY `e`.`ID`
+
+
+CREATE VIEW `view_personal_data` AS
+    SELECT 
+        `personal_data`.`ID` AS `ID`,
+        `personal_data`.`first_name` AS `first_name`,
+        `personal_data`.`last_name` AS `last_name`,
+        `personal_data`.`gender` AS `gender`,
+        `personal_data`.`house_no` AS `house_no`,
+        `personal_data`.`lane` AS `lane`,
+        `personal_data`.`city` AS `city`,
+        `personal_data`.`birthday` AS `birthday`,
+        `personal_data`.`NIC_no` AS `NIC_no`,
+        `phone_numbers`.`number` AS `number`,
+        `employee`.`dept_name` AS `dept_name`,
+        `employee`.`sup_ID` AS `sup_ID`,
+        `salary`.`amount` AS `amount`,
+        `title`.`job` AS `job`,
+        `branch`.`city` AS `branch_city`,
+        `status`.`state` AS `state`
+    FROM
+        ((((((`personal_data`
+        JOIN `employee` ON (`employee`.`ID` = `personal_data`.`ID`))
+        JOIN `salary` ON (`salary`.`salary_ID` = `employee`.`salary_ID`))
+        JOIN `title` ON (`title`.`title_ID` = `employee`.`title_ID`))
+        JOIN `branch` ON (`branch`.`branch_ID` = `employee`.`branch_ID`))
+        JOIN `status` ON (`status`.`status_ID` = `employee`.`status_ID`))
+        JOIN `phone_numbers` ON (`phone_numbers`.`ID` = `employee`.`ID`))
